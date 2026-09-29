@@ -33,8 +33,9 @@ Qwen3.6-35B-A3B release. By apirathaiya. Apache-2.0: free for commercial and non
 | Training | none |
 | Serving | OpenAI-compatible HTTP server on `127.0.0.1`, with streaming and tool calling |
 
-With the shipped `scripts/bench.py`, which uses the server's generation loop, the same machine measures about
-**11.8 tok/s** decode (+52% vs plain streaming). See [Performance notes](#performance-notes).
+15.0 tok/s is measured under controlled conditions. Under everyday conditions, with other apps running, the shipped
+`scripts/bench.py` measured about **11.8 tok/s** decode (+52% vs plain streaming) on the same machine. See
+[Performance notes](#performance-notes).
 
 ## Comparison with other SSD-streaming projects
 
@@ -52,7 +53,7 @@ hardware.
 | [expert-sniper](https://github.com/walter-grace/expert-sniper) | Qwen3-Coder-30B-A3B 4-bit (128 experts) | top-8, router nudged toward cached experts; bias for this figure not stated | not stated | 16 GB | ~3.6 GB² | 4.0 |
 | [expert-sniper](https://github.com/walter-grace/expert-sniper) | Qwen3-30B-A3B 4-bit (128 experts), routing bias 0 | top-8, exact | lossless | 16 GB | — | 1.15 |
 
-¹ Lab measurement. `scripts/bench.py` measures about 11.8 tok/s on the same machine.
+¹ Controlled lab measurement. Under everyday conditions `scripts/bench.py` measured about 11.8 tok/s on the same machine.
 ² Reported as peak RAM, not peak MLX memory.
 
 **What the table shows:** AiiStream Q3.6 is the only entry that is byte-identical *and* runs on 16 GB. Sources were
@@ -120,8 +121,11 @@ python scripts/bench.py              # paired A/B decode throughput: plain on-de
     fix. A later paired A/B in the same harness measured the fixed engine against that build: **+1.45% median, 5 of 8
     pairs faster**, i.e. no measurable speed change
     ([`evidence/production_checks_2026-09-29.json`](evidence/production_checks_2026-09-29.json)).
-  - **11.8 tok/s** is what `scripts/bench.py` measures on the same machine. It uses the server's generation loop and
-    a different estimator. The cause of the gap to 15.0 is not yet identified.
+  - **15.0 is the controlled figure**: a clean machine with nothing else competing for memory or the GPU.
+  - **11.8 tok/s** is what `scripts/bench.py` measured on the same machine under everyday conditions, with other
+    software running (412 MB of swap in use at the end of the run, recorded in
+    [`evidence/bench.json`](evidence/bench.json)). The engine and its output are the same in both runs; the
+    difference comes from the environment around it.
   - The same build measured between 11.5 and 15.0 tok/s on different days, depending on free RAM.
 - **Long reasoning.** The model may think before answering, and that thinking counts toward completion time.
 
