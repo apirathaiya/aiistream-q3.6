@@ -1,0 +1,15 @@
+AiiStream Q3.6
+Copyright 2026 apirathaiya
+
+This product includes software developed by apirathaiya (AiiStream Q3.6).
+
+Licensed under the Apache License, Version 2.0 (see LICENSE). Commercial use, modification
+and redistribution are permitted. Under Section 4(d) of the License, any distribution of this
+work or of a derivative work must retain the attribution notices in this NOTICE file.
+Credit "AiiStream Q3.6 by apirathaiya" in your documentation or in your about/credits screen.
+
+Third-party components, not redistributed here:
+- MLX and mlx-lm (Apple, MIT License). The engine imports mlx-lm's Qwen3.5/3.6 model definition
+  and switch-layer utilities.
+- Qwen3.6-35B-A3B weights (Qwen team; 4-bit MLX conversion by mlx-community). They are downloaded
+  separately by scripts/download_model.sh and remain under their own license.

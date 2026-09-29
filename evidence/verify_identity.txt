@@ -1,0 +1,36 @@
+CASE prefetch greedy_ordinary_200 eq_mlx_lm=True n=200 finish=length tool=False wall=21.7
+CASE prefetch seeded_ordinary_200 eq_mlx_lm=True n=200 finish=length tool=False wall=19.2
+CASE prefetch greedy_tools_400 eq_mlx_lm=True n=64 finish=stop tool=True wall=19.7
+CASE prefetch seeded_tools_400 eq_mlx_lm=True n=66 finish=stop tool=True wall=14.2
+CASE prefetch short_greedy_ordinary eq_mlx_lm=True n=12 finish=length tool=False wall=2.8
+CASE prefetch short_seeded_ordinary eq_mlx_lm=True n=12 finish=length tool=False wall=2.4
+CASE prefetch short_greedy_tools eq_mlx_lm=True n=12 finish=length tool=False wall=17.0
+CASE prefetch short_seeded_tools eq_mlx_lm=True n=12 finish=length tool=False wall=11.9
+DONE prefetch mismatch_vs_mlx_lm []
+CASE direct greedy_ordinary_200 eq_mlx_lm=True n=200 finish=length tool=False wall=23.7
+CASE direct seeded_ordinary_200 eq_mlx_lm=True n=200 finish=length tool=False wall=37.3
+CASE direct greedy_tools_400 eq_mlx_lm=True n=64 finish=stop tool=True wall=33.5
+CASE direct seeded_tools_400 eq_mlx_lm=True n=66 finish=stop tool=True wall=42.1
+CASE direct short_greedy_ordinary eq_mlx_lm=True n=12 finish=length tool=False wall=3.2
+CASE direct short_seeded_ordinary eq_mlx_lm=True n=12 finish=length tool=False wall=2.7
+CASE direct short_greedy_tools eq_mlx_lm=True n=12 finish=length tool=False wall=16.2
+CASE direct short_seeded_tools eq_mlx_lm=True n=12 finish=length tool=False wall=12.8
+DONE direct mismatch_vs_mlx_lm []
+CASE parallel greedy_ordinary_200 eq_mlx_lm=True n=200 finish=length tool=False wall=53.4
+CASE parallel seeded_ordinary_200 eq_mlx_lm=True n=200 finish=length tool=False wall=62.5
+CASE parallel greedy_tools_400 eq_mlx_lm=True n=64 finish=stop tool=True wall=42.0
+CASE parallel seeded_tools_400 eq_mlx_lm=True n=66 finish=stop tool=True wall=33.0
+CASE parallel short_greedy_ordinary eq_mlx_lm=True n=12 finish=length tool=False wall=4.2
+CASE parallel short_seeded_ordinary eq_mlx_lm=True n=12 finish=length tool=False wall=3.8
+CASE parallel short_greedy_tools eq_mlx_lm=True n=12 finish=length tool=False wall=16.1
+CASE parallel short_seeded_tools eq_mlx_lm=True n=12 finish=length tool=False wall=12.8
+DONE parallel mismatch_vs_mlx_lm []
+greedy_ordinary_200    tokens=200 tool_call=False identical_across_modes=True matches_stock=True
+seeded_ordinary_200    tokens=200 tool_call=False identical_across_modes=True matches_stock=True
+greedy_tools_400       tokens= 64 tool_call=True  identical_across_modes=True matches_stock=True
+seeded_tools_400       tokens= 66 tool_call=True  identical_across_modes=True matches_stock=True
+short_greedy_ordinary  tokens= 12 tool_call=False identical_across_modes=True matches_stock=True
+short_seeded_ordinary  tokens= 12 tool_call=False identical_across_modes=True matches_stock=True
+short_greedy_tools     tokens= 12 tool_call=False identical_across_modes=True matches_stock=True
+short_seeded_tools     tokens= 12 tool_call=False identical_across_modes=True matches_stock=True
+RESULT: PASS - identical to the unmodified model in all modes

@@ -1,0 +1,11 @@
+model/checkpoint/*
+!model/checkpoint/.gitkeep
+model/hf-metadata/*
+!model/hf-metadata/.gitkeep
+server/logs/*
+!server/logs/.gitkeep
+server/bin/thermal_state
+__pycache__/
+*.pyc
+.venv/
+bench-results/

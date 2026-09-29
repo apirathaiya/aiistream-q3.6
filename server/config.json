@@ -1,0 +1,16 @@
+{
+  "expert_read_path": "prefetch",
+  "port": 8081,
+  "queue_limit": 4,
+  "max_context": 32768,
+  "max_context_hard_ceiling": 65536,
+  "telemetry": {
+    "poll_seconds": 5
+  },
+  "safety": {
+    "memory_pressure_stop": true,
+    "throughput_collapse_stop": true,
+    "collapse_fraction": 0.5,
+    "collapse_window_seconds": 60
+  }
+}

@@ -1,0 +1,7 @@
++-o AppleSmartBattery  <class AppleSmartBattery, id 0x100000000>
+    {
+      "CurrentCapacity" = 80
+      "ExternalConnected" = Yes
+      "Temperature" = 3029
+      "VirtualTemperature" = 2969
+    }
