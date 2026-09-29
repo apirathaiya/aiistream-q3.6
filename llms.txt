@@ -7,10 +7,13 @@
 - **Model:** mlx-community/Qwen3.6-35B-A3B-4bit at a pinned revision (40 MoE layers, 256 experts, top-8). `scripts/download_model.sh` downloads it and verifies every file's SHA-256.
 - **Tested on:** Apple M5, 16 GB, macOS 27.0, `mlx==0.32.2`, `mlx-lm==0.31.3`.
 - **Speed:**
-  - 11.8 tok/s decode throughput (engine, in-process, prefill excluded; `scripts/bench.py`);
-  - +52% faster decode than plain on-demand streaming in the same run.
+  - 15.0 tok/s decode (lab measurement, 512-token generations; 15.1 on held-out prompts), +72.6% faster than plain on-demand streaming (12/12 paired runs). Summary: `evidence/harness_2026-09-28.json`.
+  - The shipped `scripts/bench.py` (server generation loop) measures about 11.8 tok/s decode, +52%, on the same machine.
   - Speed depends on free RAM, because macOS caches model files.
-- **Memory:** MLX peak 1.7 GB during generation.
+- **Less RAM:** not tested, but expected to work more slowly. The engine itself needs about 1.7 GB (MLX peak) / 2 GB (process); expert weights are read from the SSD and never held in RAM; extra RAM only serves as reclaimable file cache. Keep prompts short and lower `max_context` on smaller Macs.
+- **Memory:** MLX peak 1.7 GB during generation; stable over 30 consecutive 300-token requests (server process ~2.0–2.2 GB, total growth ≤ 92 MB). Summary: `evidence/production_checks_2026-09-29.json`.
+- **Seeded-sampling fix:** no measurable speed change (paired lab A/B vs the 15.0 build: +1.45% median, 5/8).
+- **Client disconnect:** generation stops ~0.1 s after the client closes the connection.
 - **Output:** identical token IDs and text SHA-256 to stock mlx-lm, including seeded sampling and tool calls. The reference is stock mlx-lm on the unmodified checkpoint (`evidence/golden_stock_mlx_lm.json`). Check with `scripts/verify_identity.py`.
 - **Method (overview):** selective expert streaming, look-ahead reading of likely experts (the model's router still decides), parallel reads with no extra copies. No training, no routing changes.
 - **Not for:** batched multi-user serving, non-Apple hardware, or users who accept modified outputs for speed.

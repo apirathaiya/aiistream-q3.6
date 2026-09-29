@@ -1,0 +1,76 @@
+{
+ "what": "Checks run on 2026-09-29 on the author's production deployment of this engine and server design, after the seeded-sampling fix and the client-disconnect cancellation were added.",
+ "setup": {
+  "machine": "Apple M5, 16 GB, macOS 27.0",
+  "mlx": "0.32.2",
+  "mlx_lm": "0.31.3"
+ },
+ "important": [
+  "These were produced by the author's development and production tooling, which is not included in this repository.",
+  "The production deployment uses the same engine and server design as this release under different internal names."
+ ],
+ "speed_after_seeded_fix": {
+  "what": "Lab harness, paired A/B in one process: the engine with the seeded-sampling fix vs the build that measured 15.0 tok/s on 2026-09-28. Greedy, 4 prompts x 512 tokens, alternating order, 1 warm-up round excluded.",
+  "pairs": 8,
+  "fix_faster_pairs": 5,
+  "median_gain": 0.0145,
+  "pair_gains": [
+   0.0376,
+   0.0146,
+   -0.0211,
+   -0.0096,
+   0.0537,
+   0.0144,
+   0.0214,
+   -0.045
+  ],
+  "with_fix_tok_s": 12.97,
+  "before_fix_tok_s": 12.95,
+  "note": "No measurable speed change from the fix. Absolute rates that day were about 13 tok/s for both builds because of machine state (about 4 GB of swap in use); compare the paired gain, not the absolutes."
+ },
+ "memory_soak": {
+  "criterion_written_before_first_request": [
+   "OLS slope over the last 15 scored requests <= 1.0 MB/request",
+   "total growth <= 256 MB",
+   "every request HTTP 200"
+  ],
+  "series": [
+   {
+    "temperature": 0.0,
+    "scored_requests": 30,
+    "completion_tokens_per_request": 300,
+    "first_footprint_mb": 2093.9,
+    "last_footprint_mb": 2186.1,
+    "last15_slope_mb_per_request": 0.044,
+    "total_growth_mb": 92.2,
+    "end_to_end_tok_s_including_prompt": 10.65,
+    "passed": true
+   },
+   {
+    "temperature": 0.2,
+    "scored_requests": 30,
+    "completion_tokens_per_request": 300,
+    "first_footprint_mb": 2017.8,
+    "last_footprint_mb": 2024.4,
+    "last15_slope_mb_per_request": -0.172,
+    "total_growth_mb": 6.6,
+    "end_to_end_tok_s_including_prompt": 10.58,
+    "passed": true
+   }
+  ]
+ },
+ "client_disconnect": {
+  "cancel_latency_s": 0.103,
+  "next_request_identical_to_before": true,
+  "server_idle_after": true,
+  "passed": true
+ },
+ "identity": "8 cases x 3 read modes, greedy and seeded, equal to the stock mlx-lm reference in evidence/golden_stock_mlx_lm.json (0 mismatches).",
+ "source_sha256": {
+  "ab_analysis.json": "e92d0709295ae22bd36e8ac78f8d66740e8a2df529607078e42fef50058a146c",
+  "soak_t0/summary.json": "4665eeea09dc64cf14c9ff1a7af234f0535fdc27be88a17c218b52e041d66eee",
+  "soak_t02/summary.json": "954ed2052935c74d4f1dabaa3c62da83ef4bcbdcb6dfe065b2fd9bc9095e4227",
+  "stg_abort.json": "95aab4736a08fb5c0e4bb39749e0308b4b9db3e396348ff1d6e2310d30845003",
+  "golden_compare.log": "4afb23f903ab0e4dc561b79e7dcbf8982b98ed329c54425d5951d5741e54b18a"
+ }
+}

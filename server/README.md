@@ -155,7 +155,9 @@ Two evidence-based safety conditions can also return 503 for **new** requests:
 
 **Client disconnects.** If a client closes the connection (streaming or not), the server notices within one token
 and stops that generation. The slot is freed for the next request and request-scoped buffers are reset. Requests
-that are not cancelled are unaffected: their output is identical.
+that are not cancelled are unaffected: their output is identical. Measured on the real model: generation stopped
+0.10 s after the client closed the connection, and the next request produced exactly the same output as before
+(`../evidence/production_checks_2026-09-29.json`).
 ## Observability — not a governor
 
 Every 5 seconds the service samples and exposes on `/health`:

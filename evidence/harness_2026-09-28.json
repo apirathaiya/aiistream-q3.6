@@ -1,0 +1,116 @@
+{
+ "what": "Research-harness decode throughput of the AiiStream prefetch engine vs direct on-demand streaming (the same comparison scripts/bench.py makes), measured 2026-09-28 during development.",
+ "important": [
+  "The lab harness that produced these numbers is not included in this repository. scripts/bench.py measures the shipped engine path.",
+  "Measured with the build from before the seeded-sampling fix. A later paired A/B in the same harness measured the fixed engine against this build: +1.45% median, 5 of 8 pairs faster, i.e. no measurable speed change (evidence/production_checks_2026-09-29.json).",
+  "The harness generation loop and estimator differ from scripts/bench.py; on the same machine the shipped path measures about 12 tok/s. The cause of the gap is not yet identified.",
+  "Warm file cache. Absolute speed depends on free RAM; the same build measured 11.5-15.0 tok/s on different days. Paired gains are the reliable figure."
+ ],
+ "setup": {
+  "machine": "Apple M5, 16 GB, macOS 27.0",
+  "mlx": "0.32.2",
+  "mlx_lm": "0.31.3",
+  "decoding": "greedy",
+  "estimator": "decode rate over steps 16..n-1 of each generation; paired, alternating order, one process; 1 warm-up round excluded"
+ },
+ "development": {
+  "prompts": 4,
+  "tokens": 512,
+  "scored_pairs": 12,
+  "positive_pairs": 12,
+  "direct_tok_s": 8.74,
+  "prefetch_tok_s": 15.0,
+  "paired_median_gain": 0.7263,
+  "final_quarter_median_gain": 0.6752,
+  "pairs": [
+   {
+    "prompt": "narrative",
+    "round": 1,
+    "gain": 0.8214
+   },
+   {
+    "prompt": "narrative",
+    "round": 2,
+    "gain": 0.6689
+   },
+   {
+    "prompt": "narrative",
+    "round": 3,
+    "gain": 0.8035
+   },
+   {
+    "prompt": "technical",
+    "round": 1,
+    "gain": 0.8028
+   },
+   {
+    "prompt": "technical",
+    "round": 2,
+    "gain": 0.3979
+   },
+   {
+    "prompt": "technical",
+    "round": 3,
+    "gain": 0.7942
+   },
+   {
+    "prompt": "code",
+    "round": 1,
+    "gain": 0.7151
+   },
+   {
+    "prompt": "code",
+    "round": 2,
+    "gain": 0.7342
+   },
+   {
+    "prompt": "code",
+    "round": 3,
+    "gain": 0.7026
+   },
+   {
+    "prompt": "tool",
+    "round": 1,
+    "gain": 0.7184
+   },
+   {
+    "prompt": "tool",
+    "round": 2,
+    "gain": 0.6679
+   },
+   {
+    "prompt": "tool",
+    "round": 3,
+    "gain": 0.7536
+   }
+  ]
+ },
+ "held_out": {
+  "note": "prompts not used during development; natural end-of-sequence allowed; token IDs and lengths identical in every pair",
+  "direct_tok_s": 8.62,
+  "prefetch_tok_s": 15.11,
+  "pooled_median_gain": 0.7485,
+  "per_prompt": {
+   "code": {
+    "tokens": 512,
+    "median_gain": 0.7327
+   },
+   "narrative": {
+    "tokens": 512,
+    "median_gain": 0.7644
+   },
+   "technical": {
+    "tokens": 512,
+    "median_gain": 0.7349
+   },
+   "tool": {
+    "tokens": 103,
+    "median_gain": 0.7798
+   }
+  }
+ },
+ "source_sha256": {
+  "stage_c_analysis.json": "d2bfc9f8255b29246a3ec295af01302305f7a411151d3c2a5a7c6fcf1a07b117",
+  "stage_h_analysis.json": "00b3d777b788dacc1c269bded96f0249938bc561301e51bc723c5d6963b2693c"
+ }
+}
