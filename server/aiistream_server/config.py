@@ -36,7 +36,7 @@ class ServiceConfig:
         if not (1 <= self.port <= 65535):
             raise ConfigError("port must be in 1..65535")
         if self.port == 8080:
-            raise ConfigError("port 8080 is reserved for TurboFieldfareServer")
+            raise ConfigError("port 8080 is reserved (the default port of other local model servers)")
         if self.expert_read_path not in ("prefetch", "direct", "parallel"):
             raise ConfigError("expert_read_path must be prefetch, direct or parallel")
         if self.queue_limit < 0:

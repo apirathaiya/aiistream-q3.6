@@ -26,8 +26,8 @@ Qwen3.6-35B-A3B release. By apirathaiya. Apache-2.0: free for commercial and non
 | vs. plain on-demand streaming | **+72.6%** faster decode on the same machine (12 of 12 paired runs faster) |
 | Time to first token | ~2.3 s for a short prompt (`scripts/bench.py`) |
 | Memory | MLX peak **1.7 GB** during generation (`scripts/bench.py`) |
-| Memory over time | **stable**: 30 consecutive 300-token requests, server process ~2.0–2.2 GB, total growth ≤ 92 MB, criterion fixed before the first request |
-| Client disconnect | generation stops **~0.1 s** after the client closes the connection; the next request is unaffected |
+| Memory over time | **stable**: 30 consecutive 300-token requests, server process ~2.0–2.2 GB, total growth ≤ 92 MB, criterion fixed before the first request ([evidence](evidence/production_checks_2026-09-29.json)) |
+| Client disconnect | generation stops **~0.1 s** after the client closes the connection; the next request is unaffected ([evidence](evidence/production_checks_2026-09-29.json)) |
 | Output | **byte-identical** to stock mlx-lm running the unmodified checkpoint (same token IDs and text SHA-256), including seeded sampling and tool calls |
 | Routing | unchanged top-8: no expert skipping, no top-k reduction, no substitute experts |
 | Training | none |
@@ -49,13 +49,15 @@ hardware.
 | [Edge0](https://github.com/Edge0-AI/Edge0) | Qwen3.6-35B-A3B int4 + trained LoRA | top-4, trained prerouter | modified (−3.9 pts avg vs fp16, their eval) | 24 GB | 2.9 GiB | 14.9–17.7 |
 | [mira-core](https://github.com/mabaeyens/mira-core/blob/main/docs/moe-offload-case-study.md) | Qwen3.6-35B-A3B 4-bit, 30% of experts resident | top-8, exact | lossless | 32 GB | 7.3 GB | 10.8 |
 | [mira-core](https://github.com/mabaeyens/mira-core/blob/main/docs/moe-offload-case-study.md) | Qwen3.6-35B-A3B 8-bit, 30% resident | top-8, exact | lossless | 32 GB | 12.7 GB | 8.1 |
+| [expert-sniper](https://github.com/walter-grace/expert-sniper) | Qwen3-Coder-30B-A3B 4-bit (128 experts) | top-8, router nudged toward cached experts; bias for this figure not stated | not stated | 16 GB | ~3.6 GB² | 4.0 |
 | [expert-sniper](https://github.com/walter-grace/expert-sniper) | Qwen3-30B-A3B 4-bit (128 experts), routing bias 0 | top-8, exact | lossless | 16 GB | — | 1.15 |
 
 ¹ Lab measurement. `scripts/bench.py` measures about 11.8 tok/s on the same machine.
+² Reported as peak RAM, not peak MLX memory.
 
-**What the table shows:** AiiStream Q3.6 is the only entry that is byte-identical *and* runs on 16 GB. Sources were checked
-2026-09-27/28: the Edge0 README Benchmark and Quality tables; mira-core `docs/moe-offload-case-study.md` §10–§11; the
-expert-sniper README "Performance (v0.2)".
+**What the table shows:** AiiStream Q3.6 is the only entry that is byte-identical *and* runs on 16 GB. Sources were
+re-checked on 2026-09-29: the Edge0 README Quality and Benchmark tables; mira-core `docs/moe-offload-case-study.md`
+§10–§11; the expert-sniper README ("One machine, measured" and "Performance (v0.2, measured)").
 
 ## How it works (overview)
 
@@ -74,7 +76,7 @@ Each generated token passes through 40 MoE layers, and each layer uses 8 of its 
 ## Quick start
 
 ```bash
-git clone <this repo> aiistream && cd aiistream
+git clone https://github.com/apirathaiya/aiistream-q3.6.git && cd aiistream-q3.6
 python3 -m venv .venv && source .venv/bin/activate
 pip install "mlx==0.32.2" "mlx-lm==0.31.3" huggingface_hub     # the versions validated for byte identity
 
@@ -91,7 +93,7 @@ for the API, tool calling, context limits and configuration.
 ## Check the claims on your machine
 
 ```bash
-python scripts/verify_identity.py    # 8 cases x 3 read modes vs the stock-model reference (~20 min)
+python scripts/verify_identity.py    # 8 cases x 3 read modes vs the stock-model reference (~15–20 min)
 python scripts/bench.py              # paired A/B decode throughput: plain on-demand streaming vs AiiStream (~20 min)
 ```
 
@@ -209,7 +211,7 @@ produce identical tokens.
 engine/     the streaming engine (hash-pinned; the server refuses to start if a file changes)
 server/     OpenAI-compatible HTTP server, config and tests
 scripts/    download_model.sh, serve.sh, verify_identity.py, bench.py, make_golden.py
-evidence/   identity and benchmark outputs produced with this code
+evidence/   identity and benchmark outputs (see evidence/README.md for which were produced with this code)
 model/      downloaded checkpoint and tokenizer (not in git)
 ```
 

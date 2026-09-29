@@ -136,8 +136,9 @@ X-Qwen36-Allow-Long-Context: true
 
 The response then includes `X-Qwen36-Long-Context-Warning` and HTTP `Warning: 299`.
 The warning states the measured cost: at 65,536 input tokens we observed roughly
-**9.6 minutes TTFT** and about **27% intra-request decode decay**. Prompts above 65,536
-are refused. This limit concerns rendered input prompt tokens; the service separately
+**9.6 minutes TTFT** and about **27% intra-request decode decay**. These context figures were
+measured on an earlier build of the engine (Apple M5, 16 GB) and have not been re-measured on this
+build. Prompts above 65,536 are refused. This limit concerns rendered input prompt tokens; the service separately
 rejects prompt + requested completion tokens that exceed the checkpoint's own model maximum.
 
 ## Concurrency and admission

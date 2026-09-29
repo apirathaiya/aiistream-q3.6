@@ -8,7 +8,7 @@ real HTTP server in each read mode (prefetch, direct, parallel), then requires A
   2. the server matches mlx-lm's own generation loop on the same engine model;
   3. the declared coverage really happened: seeded sampling differs from greedy, and the
      tool cases produced a parsed tool call.
-Takes ~15 minutes; loads the model once per mode. Exit code 0 only if every check passes."""
+Takes ~15-20 minutes; loads the model once per mode. Exit code 0 only if every check passes."""
 import json, subprocess, sys, tempfile
 from pathlib import Path
 
