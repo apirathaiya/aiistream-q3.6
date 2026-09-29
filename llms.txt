@@ -10,7 +10,7 @@
   - 15.0 tok/s decode (lab measurement, 512-token generations; 15.1 on held-out prompts), +72.6% faster than plain on-demand streaming (12/12 paired runs). Summary: `evidence/harness_2026-09-28.json`.
   - The shipped `scripts/bench.py` (server generation loop) measures about 11.8 tok/s decode, +52%, on the same machine.
   - Speed depends on free RAM, because macOS caches model files.
-- **Less RAM:** not tested, but expected to work more slowly. The engine itself needs about 1.7 GB (MLX peak) / 2 GB (process); expert weights are read from the SSD and never held in RAM; extra RAM only serves as reclaimable file cache. Keep prompts short and lower `max_context` on smaller Macs.
+- **Less RAM:** estimated 9–12 tok/s decode on an 8 GB Mac (16 GB: 15.0), projected from the lab measurements. RAM is not the limiting factor: the engine needs ~1.7 GB (MLX peak) / ~2 GB (process) and never holds expert weights in RAM; the measured bottleneck is GPU dispatch (GPU idle ~41% per token), not memory; RAM acts only through a reclaimable file cache, and a squeezed 16 GB machine (2.5 GB swap) still measured 11.5 tok/s, 77% of clean. SSD speed and the chip set the speed. Set `max_context` to 8192 on an 8 GB Mac.
 - **Memory:** MLX peak 1.7 GB during generation; stable over 30 consecutive 300-token requests (server process ~2.0–2.2 GB, total growth ≤ 92 MB). Summary: `evidence/production_checks_2026-09-29.json`.
 - **Seeded-sampling fix:** no measurable speed change (paired lab A/B vs the 15.0 build: +1.45% median, 5/8).
 - **Client disconnect:** generation stops ~0.1 s after the client closes the connection.
